@@ -3,6 +3,9 @@ layout: post
 title: "Peeking into the Developer World: Insights from Stack Overflow's 2024 Survey" 
 ---
 
+![A dashboard image](../assets/images/istockphoto-2154830395-1024x1024.jpg)
+*Image source: Unsplash
+
 Hi there! This time, I explored the data from the annual survey conducted by Stack Overflow (2024 edition), a site used by developers worldwide, to look for developer trends. I'd like to share some of the analysis I worked on as part of Udacity's Data Science program!
 
 ---

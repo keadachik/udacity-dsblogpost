@@ -1,11 +1,3 @@
-
----
-layout: post
-title: "Peeking ßinto the Developer World."
-
-![A dashboard image](../assets/images/istockphoto-2154830395-1024x1024.jpg)
-*Image source: Unsplash
-
 # Stack Overflow 2024 Developer Survey Analysis
 
 This repository contains my project for the first part of the Udacity Data Scientist Nanodegree. The goal was to explore the Stack Overflow Developer Survey 2024 dataset to understand current trends in the developer community.
