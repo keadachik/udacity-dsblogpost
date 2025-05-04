@@ -58,6 +58,62 @@ Looking at this graph, we can see a trend where **longer professional experience
 
 I also tried building a simple prediction model, but it seems difficult to explain salaries fully just based on factors like experience, country, and education. It suggests that many other factors (like specific technologies used, company size, individual skills, etc.) are involved in determining salary in complex ways.
 
+```
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import root_mean_squared_error, r2_score
+
+# Define features based on selection justification above
+features_for_model = [
+    'WorkExp', 'YearsCodePro', # Selected Numeric
+    'EdLevel', 'DevType', 'Country', 'RemoteWork', 'OrgSize' # Selected Categorical
+]
+
+# Ensure df_cleaned is ready (use the dataframe prepared in section 4)
+X = df_cleaned[features_for_model].copy()
+y = df_cleaned['ConvertedCompYearly']
+
+# --- One-Hot Encoding (Should ideally be in Data Prep, but can be here if needed just before splitting) ---
+# Rationale: Convert categorical features into a format suitable for the linear model.
+categorical_cols_model = X.select_dtypes(include='object').columns
+print(f"\n--- One-Hot Encoding features for model: {list(categorical_cols_model)} ---")
+X = pd.get_dummies(X, columns=categorical_cols_model, drop_first=True)
+print(f"Shape of X after One-Hot Encoding: {X.shape}")
+
+# --- Final Check for NaNs in final X before splitting ---
+# Rationale: Crucial check to ensure no NaNs remain after all preprocessing.
+if X.isnull().sum().sum() > 0:
+    print("Warning! NaNs detected in final feature matrix X:")
+    print(X.isnull().sum()[X.isnull().sum() > 0])
+    # Add emergency handling if needed, e.g., X.fillna(0, inplace=True)
+else:
+    print("Final feature matrix X contains no NaNs.")
+
+# --- データの分割 ---
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# --- モデルのトレーニング（Linear Regression） ---
+lr_model = LinearRegression()
+lr_model.fit(X_train, y_train)
+
+# --- 予測と評価 ---
+y_pred = lr_model.predict(X_test)
+rmse = root_mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"\nLinear Regression RMSE: {rmse:.2f}")
+print(f"Linear Regression R-squared: {r2:.2f}")
+```
+
+```
+--- One-Hot Encoding features for model: ['EdLevel', 'DevType', 'Country', 'RemoteWork', 'OrgSize'] ---
+Shape of X after One-Hot Encoding: (23435, 221)
+Final feature matrix X contains no NaNs.
+
+Linear Regression RMSE: 91018.08
+Linear Regression R-squared: 0.19
+```
+
 ---
 
 ## Conclusion
