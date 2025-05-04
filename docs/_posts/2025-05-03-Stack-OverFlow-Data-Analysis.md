@@ -42,7 +42,7 @@ Next, let's look at the median annual salary (the value for the person in the mi
 The map clearly shows a trend where salaries tend to be higher in North American and European countries like the **United States** and **Switzerland**. On the other hand, countries in Asia and South America showed relatively lower tendencies.
 
 *(Optional: Add a screenshot of the boxplot and mention the variation)*
-![Compensation Distribution by Country Boxplot](../assets/images/q2_country_map.png)
+![Compensation Distribution by Country Boxplot](../assets/images/q2_country_dist.png)
 *Graph 3: Annual Compensation Distribution for Key Countries (Box Plot)*
 
 The box plot also shows that the *range* or spread of salaries varies from country to country.
