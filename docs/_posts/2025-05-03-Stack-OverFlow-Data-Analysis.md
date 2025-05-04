@@ -3,8 +3,7 @@ layout: post
 title: "Peeking into the Developer World: Insights from Stack Overflow's 2024 Survey" 
 ---
 
-Hi there! This time, I explored the data from the annual survey conducted by Stack Overflow (2024 edition), a site used by developers worldwide, to look for developer trends. 
-I'd like to share some of the analysis I worked on as part of Udacity's Data Science program!
+Hi there! This time, I explored the data from the annual survey conducted by Stack Overflow (2024 edition), a site used by developers worldwide, to look for developer trends. I'd like to share some of the analysis I worked on as part of Udacity's Data Science program!
 
 ---
 
@@ -29,106 +28,57 @@ First, here are the top 10 programming languages that developers reported using 
 ![Top 10 Programming Languages](../assets/images/q1_languages_plot.png)
 *Graph 1: Top 10 Most Commonly Used Programming Languages*
 
-As expected, **JavaScript** is the most popular! HTML/CSS, often used for website creation, and **Python**, popular in data analysis and AI, are also high on the list. 
-This shows that web development and data-related technologies are widely used.
+As expected, **JavaScript** remains incredibly popular, likely because it's essential for building interactive websites and web applications. **SQL**, used for managing databases, and **HTML/CSS**, the building blocks of web pages, are also right at the top, reinforcing the importance of web technologies. **Python**'s high ranking reflects its versatility, being widely used not just in web development but also significantly in data science, AI, and automation. TypeScript's presence suggests a growing trend towards adding more structure and safety to JavaScript development. Overall, the skills needed for building and managing applications on the web and working with data appear to be in high demand.
 
 ### 2. Salary Differences by Country
 
-Next, let's look at the median annual salary (the value for the person in the middle when everyone is lined up by salary) by country on a world map. (Note: Countries with too few responses were excluded).
+Next, let's look at the median annual salary (the typical salary value) by country on a world map. (Note: To make comparisons more reliable, countries with very few survey responses were excluded).
 
 ![Median Compensation by Country Map](../assets/images/q2_country_map.png)
 *Graph 2: Median Annual Compensation by Country (Darker color means higher)*
 
-The map clearly shows a trend where salaries tend to be higher in North American and European countries like the **United States** and **Switzerland**. On the other hand, countries in Asia and South America showed relatively lower tendencies.
+The map clearly shows significant differences across the globe. Salaries tend to be noticeably higher in countries like the **United States**, **Switzerland**, and **Israel** compared to others shown, such as **India**, **Brazil**, or **Ukraine**. This geographic pattern, with North America, Western Europe, and Oceania generally showing higher compensation, might be influenced by factors like the cost of living, the maturity and size of the local tech industry, or the specific types of development roles prevalent in those regions.
 
 *(Optional: Add a screenshot of the boxplot and mention the variation)*
 ![Compensation Distribution by Country Boxplot](../assets/images/q2_country_dist.png)
 *Graph 3: Annual Compensation Distribution for Key Countries (Box Plot)*
 
-The box plot also shows that the *range* or spread of salaries varies from country to country.
+Looking closer at the distribution with a box plot (Graph 3), we can also see that the *range* of salaries (from lower earners to higher earners within the same country) varies significantly. Some countries have a very wide spread, while others are more compressed. This indicates that even within a country, compensation isn't uniform.
 
 ### 3. Factors Related to Higher Salaries
 
-Finally, I explored what factors might be related to higher salaries. Let's look specifically at the relationship between "years of experience" and salary.
+Finally, I explored what factors might be related to higher salaries. One of the clearest relationships was between years of professional coding experience and compensation.
 
 ![Compensation vs Years of Professional Experience](../assets/images/q3_experience_scatter.png)
 *Graph 4: Relationship between Years of Professional Experience and Annual Compensation (Scatter Plot)*
 
-Looking at this graph, we can see a trend where **longer professional experience tends to correlate with higher annual income**. However, it's also clear that there's quite a wide range of salaries even for the same level of experience.
+Looking at this graph (Graph 4), we can see a clear upward trend: generally, **developers with more years of professional experience tend to earn higher annual salaries**. This makes intuitive sense, as experience often correlates with increased skills, responsibility, and value to employers.
 
-I also tried building a simple prediction model, but it seems difficult to explain salaries fully just based on factors like experience, country, and education. It suggests that many other factors (like specific technologies used, company size, individual skills, etc.) are involved in determining salary in complex ways.
+However, the graph also shows a lot of variation. Notice how for any given number of years of experience, there's a wide range of salaries. This tells us that while experience is important, it's definitely not the only factor determining pay.
 
-```
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import root_mean_squared_error, r2_score
+**Trying to combine factors like experience, country, and education to understand their collective impact proved challenging.** Further analysis suggested that predicting salary precisely is quite difficult. This implies that many other elements play a crucial role in determining a developer's compensation. These could include:
+*   **Specific technical skills:** Proficiency in high-demand languages or specialized tools.
+*   **Company factors:** The size, industry, and financial health of the employer.
+*   **Role and responsibilities:** Management duties, level of seniority, specific project impact.
+*   **Location specifics:** Beyond just the country, the specific city or region's cost of living and job market.
+*   **Individual factors:** Negotiation skills, educational background details, portfolio quality, etc.
 
-# Define features based on selection justification above
-features_for_model = [
-    'WorkExp', 'YearsCodePro', # Selected Numeric
-    'EdLevel', 'DevType', 'Country', 'RemoteWork', 'OrgSize' # Selected Categorical
-]
-
-# Ensure df_cleaned is ready (use the dataframe prepared in section 4)
-X = df_cleaned[features_for_model].copy()
-y = df_cleaned['ConvertedCompYearly']
-
-# --- One-Hot Encoding (Should ideally be in Data Prep, but can be here if needed just before splitting) ---
-# Rationale: Convert categorical features into a format suitable for the linear model.
-categorical_cols_model = X.select_dtypes(include='object').columns
-print(f"\n--- One-Hot Encoding features for model: {list(categorical_cols_model)} ---")
-X = pd.get_dummies(X, columns=categorical_cols_model, drop_first=True)
-print(f"Shape of X after One-Hot Encoding: {X.shape}")
-
-# --- Final Check for NaNs in final X before splitting ---
-# Rationale: Crucial check to ensure no NaNs remain after all preprocessing.
-if X.isnull().sum().sum() > 0:
-    print("Warning! NaNs detected in final feature matrix X:")
-    print(X.isnull().sum()[X.isnull().sum() > 0])
-    # Add emergency handling if needed, e.g., X.fillna(0, inplace=True)
-else:
-    print("Final feature matrix X contains no NaNs.")
-
-# --- データの分割 ---
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-# --- モデルのトレーニング（Linear Regression） ---
-lr_model = LinearRegression()
-lr_model.fit(X_train, y_train)
-
-# --- 予測と評価 ---
-y_pred = lr_model.predict(X_test)
-rmse = root_mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-
-print(f"\nLinear Regression RMSE: {rmse:.2f}")
-print(f"Linear Regression R-squared: {r2:.2f}")
-```
-
-```
---- One-Hot Encoding features for model: ['EdLevel', 'DevType', 'Country', 'RemoteWork', 'OrgSize'] ---
-Shape of X after One-Hot Encoding: (23435, 221)
-Final feature matrix X contains no NaNs.
-
-Linear Regression RMSE: 91018.08
-Linear Regression R-squared: 0.19
-```
+In short, while experience matters, a developer's salary seems to be the result of a complex mix of many different variables.
 
 ---
 
 ## Conclusion
 
-From this analysis, I found that:
+*   **Web and data-related programming languages** like JavaScript, SQL, HTML/CSS, and Python are currently very popular among developers.
+*   There are **significant global disparities in developer salaries**, with countries like the US and Switzerland generally offering higher compensation than many others, likely influenced by local economic factors.
+*   **Years of professional experience is a strong indicator of higher salary**, but it's far from the whole story; many other factors contribute to the wide variation observed.
 
-*   Web development technologies remain very popular.
-*   There are significant salary differences depending on the country where developers work.
-*   Years of professional experience are strongly related to salary.
-
-At the same time, I felt that the way salaries are determined seems quite complex.
+Overall, the developer landscape is dynamic, and while we can spot clear trends in technology use and compensation drivers like experience and location, individual salary determination remains a complex interplay of various factors.
 
 Data analysis is interesting! I look forward to exploring more data in the future.
 
 *(Optional: Link to the project repository)*
-You can find the detailed analysis code on the [GitHub repository](https://github.com/keadachik/udacity-dsblogpost).
+You can find the detailed analysis code (including the models attempted) on the [GitHub repository](https://github.com/keadachik/udacity-dsblogpost).
+
 
 ---
